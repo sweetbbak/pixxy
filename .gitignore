@@ -1,0 +1,5 @@
+./bin/
+./images/
+./pkg/quantize/testdata/
+*.png
+.image-history
