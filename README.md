@@ -1,7 +1,8 @@
-input:
-![image of cowgirl](./assets/cowgirl-thumbnail.jpg)
+# Pixxy
 
-cmd:
+A really sweet image manipulation tool for creating aesthetic images on the command line.
+
+---
 
 you can apply any arbitrary set of colors to an image, in this case I used a theme file for the Kitty terminal.
 `pixxy` will automatically parse this file for any valid hex colors and apply them to the image. You can use
@@ -9,11 +10,20 @@ any file (or string) that contains hex colors. This can be useful for creating t
 any Gruvbox config file and the image will match those colors.
 
 ```sh
-pixxy glitch --input ~/Pictures/cowgirl-thumbnail.jpg --output output.gif --seed sweet -t 1.0 --palette-file ~/.config/kitty/themes/ayanami-cold.conf --gif -v
+pixxy glitch \
+    --gif \
+    --verbose \
+    --input ~/Pictures/cowgirl-thumbnail.jpg \
+    --output output.gif \
+    --seed sweet \
+    --threshold 1.0 \
+    --palette-file ~/.config/kitty/themes/ayanami-cold.conf \
 ```
 
 output:
-![image of cowgirl glitched as a gif](./assets/cowgirl-glitch.gif)
+Input | Output  
+:-------------------------:|:-------------------------:
+![image of cowgirl](./assets/cowgirl-thumbnail.jpg)|![image of cowgirl glitched as a gif](./assets/cowgirl-glitch.gif)
 
 another example using the terminal text-editor, Helix, Gruvbox theme file:
 ![hatsune miku remixed with Gruvbox](./assets/screenshot.png)
