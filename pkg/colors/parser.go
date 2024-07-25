@@ -60,7 +60,7 @@ func (p *Parser) ParseFile(r io.Reader) error {
 
 		if matches != nil {
 			for _, c := range matches {
-				println(c)
+				// println(c)
 				clr := gamut.Hex(strings.TrimSpace(c))
 				p.Colors = append(p.Colors, clr)
 			}

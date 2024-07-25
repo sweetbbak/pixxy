@@ -9,6 +9,7 @@ import (
 	"image/draw"
 	"image/gif"
 	"io"
+	"log"
 	"math"
 	"math/rand"
 	"os"
@@ -34,6 +35,12 @@ type glitch_options struct {
 }
 
 type GlitchOption func(args *glitch_options) error
+
+func GlitchSetDebug(b bool) {
+	if b {
+		debug = log.Printf
+	}
+}
 
 func GlitchBrightness(c float64) GlitchOption {
 	return func(args *glitch_options) error {
@@ -68,7 +75,7 @@ func GlitchSeed(s string) GlitchOption {
 
 func GlitchPalette(c []color.Color) GlitchOption {
 	return func(args *glitch_options) error {
-		args.colors = c
+		args.colors = append(args.colors, c...)
 		return nil
 	}
 }
@@ -156,16 +163,8 @@ func GlitchGif(srcImg image.Image, writer io.Writer, opts ...GlitchOption) (*gif
 	pal := color.Palette{}
 	var palettedImage *image.Paletted
 
-	if len(defaultOpts.colors) > 0 {
-		for _, c := range defaultOpts.colors {
-			pal = append(pal, c)
-		}
-
-		palettedImage = image.NewPaletted(bounds, pal)
-	} else {
-		pal = palette.Plan9[:256]
-		palettedImage = image.NewPaletted(bounds, palette.Plan9[:256])
-	}
+	pal = palette.Plan9[:256]
+	palettedImage = image.NewPaletted(bounds, palette.Plan9[:256])
 
 	draw.FloydSteinberg.Draw(palettedImage, bounds, output, image.Pt(0, 0))
 
@@ -240,7 +239,7 @@ func (g *glitch_options) GlitchImage(img image.Image) (image.Image, error) {
 
 	if len(g.colors) > 0 {
 		imgq := quantize.ApplyQuantization(input, g.colors)
-		draw.Draw(input, bounds, imgq, bounds.Min, draw.Src)
+		draw.Draw(output, bounds, imgq, bounds.Min, draw.Src)
 	}
 
 	glitchify(input, output, bounds, g.glitchFactor)
