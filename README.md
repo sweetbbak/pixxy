@@ -14,3 +14,6 @@ pixxy glitch --input ~/Pictures/cowgirl-thumbnail.jpg --output output.gif --seed
 
 output:
 ![image of cowgirl glitched as a gif](./assets/cowgirl-glitch.gif)
+
+another example using the terminal text-editor, Helix, Gruvbox theme file:
+![hatsune miku remixed with Gruvbox](./assets/screenshot.png)
