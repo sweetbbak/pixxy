@@ -27,3 +27,30 @@ Input | Output
 
 another example using the terminal text-editor, Helix, Gruvbox theme file:
 ![hatsune miku remixed with Gruvbox](./assets/screenshot.png)
+
+# Wallpaper-finder
+
+find wallpaper sized images!
+
+```sh
+wallpaper-finder -e jpg -e jpeg -e png ~/Pictures ~/images | \
+    fzf --preview='kitty icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 {}'
+```
+
+```sh
+Usage:
+  wallpaper-finder [OPTIONS]
+
+Application Options:
+  -e, --extension= an array of extensions to search for ie (-e png -e jpg)
+  -d, --directory= an array of paths to search, can specify more than one
+  -r, --ratio=     a ratio to search, in the format <widht>x<height> (16x9)
+  -t, --tolerance= percentage of tolerance for the ratio [5%] (default: 5)
+  -c, --color      print paths with color
+  -f, --follow     follow symlinks
+  -v, --verbose    print debugging information and verbose output
+
+Help Options:
+  -h, --help       Show this help message
+
+```
