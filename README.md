@@ -28,6 +28,42 @@ Input | Output
 another example using the terminal text-editor, Helix, Gruvbox theme file:
 ![hatsune miku remixed with Gruvbox](./assets/screenshot.png)
 
+## Dither
+
+examples
+
+```sh
+# simple dither
+pix dither           \
+  --input input.png  \
+  --output out.png   \
+  --dither floyd
+
+# use dithering and ordered dither matrices (ie "dots" and manga like toning)
+pix dither              \
+  --input input.png     \
+  --output out.png      \
+  --dither floyd        \
+  --ordered vertical5x3
+
+# layer multiple dither filters
+pix dither              \
+  --input input.png     \
+  --output out.png      \
+  -d floyd -d atkinsons \
+  -m vertical5x3        \
+  --bayer
+
+# random ordered matrix of 0.3 strength and using a color palette from a random file containing hex colors
+pix dither \
+--input input.png \
+--output out.png \
+--palette-file ~/.config/kitty/themes/pretty-pink.conf \
+-t 0.3 \
+-m $(/pix dither --list-maps | shuf | head -n1) \
+--scale --scale-factor 5
+```
+
 # Wallpaper-finder
 
 find wallpaper sized images!
