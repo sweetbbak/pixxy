@@ -18,8 +18,9 @@ type Pixels struct {
 
 type Dither struct {
 	Halftone    bool     `short:"H" long:"halftone" description:"halftone dithering"`
+	Bayer       bool     `short:"b" long:"bayer" description:"bayer dithering"`
 	Scale       bool     `short:"s" long:"scale" description:"rescale image down and then up to accentuate fx"`
-	Threshold   float64  `short:"t" long:"threshold" description:"luminence threshold 0-255. default [133]"`
+	Threshold   float64  `short:"t" long:"threshold" description:"float from 0.0 - 1.0"`
 	Input       string   `short:"i" long:"input" description:"input image file, explicit flag (also accepts a trailing positional argument)"`
 	DitherType  []string `short:"d" long:"dither" description:"dither type using error diffusion dithering"`
 	ODM         []string `short:"m" long:"ordered" description:"ordered dither matrix type dithering"`
