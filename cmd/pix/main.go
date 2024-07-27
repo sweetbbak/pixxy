@@ -30,8 +30,7 @@ func Pixxy(args []string) error {
 	case "glitch":
 		glitchopts.GlitchImage()
 	case "dither":
-		// ditheropts.DitherImage()
-		err := ditheropts.DitherF()
+		err := ditheropts.DitherImage()
 		if err != nil {
 			return err
 		}

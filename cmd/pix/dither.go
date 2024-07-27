@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"image/draw"
 	"os"
 	"strings"
 
@@ -15,10 +14,6 @@ import (
 
 	"github.com/makeworld-the-better-one/dither/v2"
 )
-
-func noOp() {
-	_ = draw.Src
-}
 
 var ditherers = map[string]dither.ErrorDiffusionMatrix{
 	"simple2d":            dither.Simple2D,
@@ -52,6 +47,18 @@ var odmName = map[string]dither.OrderedDitherMatrix{
 	"clustereddot6x6_2":          dither.ClusteredDot6x6_2,
 	"clustereddot6x6_3":          dither.ClusteredDot6x6_3,
 	"clustereddotdiagonal8x8_3":  dither.ClusteredDotDiagonal8x8_3,
+}
+
+func (d *Dither) ListMaps() {
+	for item := range odmName {
+		fmt.Fprintln(os.Stdout, item)
+	}
+}
+
+func (d *Dither) ListDitherers() {
+	for item := range ditherers {
+		fmt.Fprintln(os.Stdout, item)
+	}
 }
 
 func (d *Dither) DitherODM(img image.Image, op string, pal []color.Color) (image.Image, error) {
@@ -108,14 +115,16 @@ func (d *Dither) DitherF() error {
 
 	bounds := img.Bounds()
 	if d.Scale {
-		img = imaging.Resize(img, bounds.Dx()/2, bounds.Dy()/2, imaging.Lanczos)
+		var sfact int
+		if d.ScaleFactor > 0 {
+			sfact = d.ScaleFactor
+		} else {
+			sfact = 2
+		}
+		img = imaging.Resize(img, bounds.Dx()/sfact, bounds.Dy()/sfact, imaging.NearestNeighbor)
 	}
 
 	dx := dither.NewDitherer(pal)
-
-	// rimg := imageToRGBA(img)
-	// newImg := image.NewRGBA(img.Bounds())
-	// copy(newImg.Pix, rimg.Pix)
 
 	for _, input := range d.DitherType {
 		dt, ok := ditherers[strings.ReplaceAll(strings.ToLower(input), "-", "_")]
@@ -125,12 +134,11 @@ func (d *Dither) DitherF() error {
 
 		fmt.Printf("running %v\n", input)
 		dx.Matrix = dt
-		// dx.Serpentine = true
+		dx.Serpentine = true
 		img = dx.Dither(img)
 		dx.Matrix = nil
 	}
 
-	// dx2 := dither.NewDitherer(pal)
 	for _, input := range d.ODM {
 		matrix, ok := odmName[strings.ReplaceAll(strings.ToLower(input), "-", "_")]
 		if !ok {
@@ -147,7 +155,7 @@ func (d *Dither) DitherF() error {
 
 	if d.Halftone {
 		ximg := imageToRGBA(img)
-		dither2.Halftone(ximg, uint16(d.Threshold*100))
+		dither2.Halftone(ximg, uint16(d.Threshold*255))
 		img = ximg
 	}
 
@@ -168,93 +176,15 @@ func (d *Dither) DitherF() error {
 }
 
 func (d *Dither) DitherImage() error {
-	var inputfile string
-	if d.Input != "" {
-		inputfile = d.Input
-	} else if d.Args.Image != "" {
-		inputfile = d.Args.Image
-	} else {
-		return fmt.Errorf("no image supplied")
+	if d.ListMatrices {
+		d.ListMaps()
+		return nil
 	}
 
-	var (
-		err error
-		img image.Image
-	)
-
-	img, err = openImage(inputfile)
-	if err != nil {
-		return err
+	if d.ListDithers {
+		d.ListDitherers()
+		return nil
 	}
 
-	var rimg *image.RGBA
-	rimg = imageToRGBA(img)
-
-	bounds := rimg.Bounds()
-
-	halftone := image.NewRGBA(bounds)
-	copy(halftone.Pix, rimg.Pix)
-	if d.Halftone {
-		dither2.Halftone(halftone, uint16(d.Threshold))
-	}
-
-	if d.Halftone {
-		filters.DitherBayer(rimg, float32(d.Threshold), filters.GetColorPalette(rimg, 3))
-	}
-
-	eightBitted := image.NewRGBA(bounds)
-	copy(eightBitted.Pix, rimg.Pix)
-	dither2.EightBit(eightBitted, int(192))
-
-	atkinsons := image.NewRGBA(bounds)
-	copy(atkinsons.Pix, rimg.Pix)
-	output, _ := dither2.AtkinsonsGrey(atkinsons)
-
-	// alphaMask := image.NewAlpha(bounds)
-	// copy alpha from src
-	// for i := range alphaMask.Pix {
-	// alphaMask.Pix[i] = rimg.Pix[i*4]
-	// }
-
-	// output := image.NewRGBA(bounds)
-	// copy(output.Pix, rimg.Pix)
-	// dither.Atkinsons(output, 122)
-	// for i := range alphaMask.Pix {
-	// alphaMask.Pix[i] = output.Pix[i*4]
-	// }
-
-	// draw.DrawMask(output, bounds, atkinsons, bounds.Min, alphaMask, bounds.Min, draw.Over)
-	// draw.DrawMask(atkinsons, bounds, rimg, bounds.Min, alphaMask, bounds.Min, draw.Over)
-
-	// newIn := image.NewRGBA(bounds)
-	// copy(newIn.Pix, atkinsons.Pix)
-	// dither.Atkinsons(newIn, 192)
-
-	// for i := range alphaMask.Pix {
-	// 	alphaMask.Pix[i] = newIn.Pix[i*4]
-	// }
-
-	bayer := image.NewRGBA(bounds)
-	copy(bayer.Pix, rimg.Pix)
-	dither2.Bayer(bayer)
-
-	floydsteinberg := image.NewRGBA(bounds)
-	copy(floydsteinberg.Pix, rimg.Pix)
-	dither2.FloydSteinberg(floydsteinberg, uint8(d.Threshold))
-
-	if d.Output != "" {
-		f, err := os.Create(d.Output)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-
-		SaveImageToPNG(halftone, d.Output)
-		SaveImageToPNG(eightBitted, "8bit.png")
-		SaveImageToPNG(atkinsons, "atk.png")
-		SaveImageToPNG(output, "atk2.png")
-		SaveImageToPNG(bayer, "bayer.png")
-		SaveImageToPNG(floydsteinberg, "floydsteinberg.png")
-	}
-	return nil
+	return d.DitherF()
 }
