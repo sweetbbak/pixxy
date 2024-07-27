@@ -17,8 +17,20 @@ type Pixels struct {
 }
 
 type Dither struct {
-	Halftone bool    `short:"H" long:"halftone" description:"halftone dithering"`
-	Amount   float64 `short:"t" long:"threshold" description:"glitch threshold"`
+	Halftone    bool     `short:"H" long:"halftone" description:"halftone dithering"`
+	Scale       bool     `short:"s" long:"scale" description:"rescale image down and then up to accentuate fx"`
+	Threshold   float64  `short:"t" long:"threshold" description:"luminence threshold 0-255. default [133]"`
+	Input       string   `short:"i" long:"input" description:"input image file, explicit flag (also accepts a trailing positional argument)"`
+	DitherType  []string `short:"d" long:"dither" description:"dither type using error diffusion dithering"`
+	ODM         []string `short:"m" long:"ordered" description:"ordered dither matrix type dithering"`
+	Output      string   `short:"o" long:"output" description:"save image/gif as output file"`
+	Palette     []string `short:"p" long:"palette" description:"supply a set of hex colors to apply a color dithering effect, reduces colors to the closest supplied color for each pixel"`
+	PaletteFile string   `short:"P" long:"palette-file" description:"supply a set of colors from a file, uses regex to extract any valid hex color (can use messy files, like terminal theme files, json, etc...)"`
+	ColorDepth  int      `short:"c" long:"color-depth" description:"create palette from the supplied image of N colors. Less is more aesthetic, more is more accurate to source."`
+
+	Args struct {
+		Image string
+	} `positional-args:"yes" positional-arg-name:"TORRENT"`
 }
 
 type Filters struct {

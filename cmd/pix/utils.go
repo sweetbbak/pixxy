@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"image"
 	"image/color"
+	"image/draw"
 	"math/rand"
 )
 
@@ -16,6 +18,41 @@ const (
 	Blue
 	Alpha
 )
+
+func imageToRGBA(src image.Image) *image.RGBA {
+	// No conversion needed if image is an *image.RGBA.
+	if dst, ok := src.(*image.RGBA); ok {
+		return dst
+	}
+
+	// Use the image/draw package to convert to *image.RGBA.
+	b := src.Bounds()
+	dst := image.NewRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
+	draw.Draw(dst, dst.Bounds(), src, b.Min, draw.Src)
+	return dst
+}
+
+func ConvertToRGBA(src image.Image) *image.RGBA {
+	// Create a new RGBA image with the same dimensions as the source image
+	dst := &image.RGBA{
+		Pix:    make([]byte, src.Bounds().Dx()*4*src.Bounds().Dy()),
+		Stride: src.Bounds().Dx() * 4,
+		Rect:   src.Bounds(),
+	}
+
+	// Copy pixels from src to dst
+	for y := 0; y < src.Bounds().Dy(); y++ {
+		for x := 0; x < src.Bounds().Dx(); x++ {
+			oldColor := src.At(x, y)
+			r, g, b, _ := oldColor.RGBA()
+
+			// Set the RGBA value for the destination pixel
+			dst.Set(x, y, color.RGBA{R: uint8(r), G: uint8(g), B: uint8(b), A: 255})
+		}
+	}
+
+	return dst
+}
 
 func RandomChannel() Channel {
 	r := rand.Float32()

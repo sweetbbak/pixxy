@@ -2,6 +2,8 @@ package dither
 
 import (
 	"image"
+	"image/color"
+	"image/draw"
 	"math"
 )
 
@@ -305,4 +307,53 @@ func FloydSteinberg(destImage *image.RGBA, threshold uint8) {
 			}
 		}
 	}
+}
+
+func mono(l uint8) uint8 {
+	if l < 128 {
+		return 0
+	} else {
+		return 255
+	}
+}
+
+// https://github.com/koyachi/go-atkinson MIT licensed
+func AtkinsonsGrey(img image.Image) (result image.Image, err error) {
+	bounds := img.Bounds()
+	dstImg := image.NewGray(bounds)
+	draw.Draw(dstImg, bounds, img, image.ZP, draw.Src)
+
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
+			c := dstImg.At(x, y)
+			gray, ok := c.(color.Gray)
+			if ok != true {
+				continue
+			}
+
+			var m = mono(gray.Y)
+			quant_err := int((float64(gray.Y) - float64(m)) / 8)
+			dstImg.SetGray(x, y, color.Gray{m})
+
+			s := 1
+			neighborsPoint := []image.Point{
+				image.Point{x + s, y},
+				image.Point{x - s, y + s},
+				image.Point{x, y + s},
+				image.Point{x + s, y + s},
+				image.Point{x + 2*s, y},
+				image.Point{x, y + 2*s},
+			}
+			for _, p := range neighborsPoint {
+				neighborColor := dstImg.At(p.X, p.Y)
+				gray, ok := neighborColor.(color.Gray)
+				if ok != true {
+					continue
+				}
+				dstImg.SetGray(p.X, p.Y, color.Gray{uint8(int16(gray.Y) + int16(quant_err))})
+			}
+		}
+	}
+
+	return dstImg, nil
 }

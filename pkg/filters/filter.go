@@ -29,16 +29,23 @@ func GetColorPalette(img image.Image, level int) []color.Color {
 }
 
 // Dither an image and adjust colors to match the given color palette
-func DitherColor(img image.Image, colors []color.Color) image.Image {
+func DitherSierra(img image.Image, colors []color.Color) image.Image {
+	d := dither.NewDitherer(colors)
+	d.Matrix = dither.Sierra
+	return d.Dither(img)
+}
+
+// Dither an image and adjust colors to match the given color palette
+func DitherFloyd(img image.Image, colors []color.Color) image.Image {
 	d := dither.NewDitherer(colors)
 	d.Matrix = dither.FloydSteinberg
 	return d.Dither(img)
 }
 
 // bayer dither
-func DitherBayer(img image.Image, colors []color.Color) image.Image {
+func DitherBayer(img image.Image, str float32, colors []color.Color) image.Image {
 	d := dither.NewDitherer(colors)
-	d.Mapper = dither.Bayer(8, 8, 1.0) // 8x8 Bayer matrix at 100% strength
+	d.Mapper = dither.Bayer(8, 8, str) // 8x8 Bayer matrix at 100% strength
 	return d.Dither(img)
 }
 

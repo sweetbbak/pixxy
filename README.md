@@ -54,3 +54,13 @@ Help Options:
   -h, --help       Show this help message
 
 ```
+
+# Acknowledgements
+
+[darkliquid/glitch](https://github.com/darkliquid/glitch) MIT license
+
+- the base glitch library I built off of
+
+[koyachi/go-atkinson](https://github.com/koyachi/go-atkinson) MIT licensed
+
+- atkinsons dither function

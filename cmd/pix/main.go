@@ -29,6 +29,12 @@ func Pixxy(args []string) error {
 	switch parser.Active.Name {
 	case "glitch":
 		glitchopts.GlitchImage()
+	case "dither":
+		// ditheropts.DitherImage()
+		err := ditheropts.DitherF()
+		if err != nil {
+			return err
+		}
 	default:
 		return nil
 	}
