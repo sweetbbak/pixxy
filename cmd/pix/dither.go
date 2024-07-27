@@ -141,10 +141,6 @@ func (d *Dither) DitherF() error {
 		img = dx.Dither(img)
 	}
 
-	if d.Scale {
-		img = imaging.Resize(img, bounds.Dx(), bounds.Dy(), imaging.Lanczos)
-	}
-
 	if d.Bayer {
 		img = filters.DitherBayer(img, float32(d.Threshold), pal)
 	}
@@ -153,6 +149,10 @@ func (d *Dither) DitherF() error {
 		ximg := imageToRGBA(img)
 		dither2.Halftone(ximg, uint16(d.Threshold*100))
 		img = ximg
+	}
+
+	if d.Scale {
+		img = imaging.Resize(img, bounds.Dx(), bounds.Dy(), imaging.Lanczos)
 	}
 
 	if d.Output != "" {
