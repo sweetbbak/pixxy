@@ -100,3 +100,7 @@ Help Options:
 [koyachi/go-atkinson](https://github.com/koyachi/go-atkinson) MIT licensed
 
 - atkinsons dither function
+
+[fiwippi/go-ascii](https://github.com/fiwippi/go-ascii) BSD-3-Clause
+
+- modified ascii converter pulled from here
