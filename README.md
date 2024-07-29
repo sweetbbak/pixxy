@@ -93,6 +93,9 @@ Help Options:
 
 # Acknowledgements
 
+The following people do not endorse or have liabilty for this project, they have graciously made their code available
+under permissive licenses which has been a great help to me as well as a learning experience. Thanks to:
+
 [darkliquid/glitch](https://github.com/darkliquid/glitch) MIT license
 
 - the base glitch library I built off of
