@@ -21,7 +21,7 @@ type Ascii struct {
 	Output        string  `short:"o" long:"output" description:"save image/gif as output file"`
 	Charset       string  `short:"c" long:"charset" description:"character set to use from lightest to darkest ie (.*!@#$%)"`
 	CharsetPreset string  `short:"C" long:"char-preset" description:"character preset to use [limited|extended|block] "`
-	FontPT        float64 `short:"p" long:"font-point" description:"font size to use"`
+	FontPT        float64 `short:"p" long:"font-size" description:"font size to use"`
 	Font          string  `short:"f" long:"font" description:"font to use, must be monospaced"`
 	Interpolate   bool    `short:"I" long:"interpolate" description:"interpolate font so that when converting successive images (gifs) the font changes less"`
 	Noise         int     `short:"n" long:"noise" description:"add random noise"`
