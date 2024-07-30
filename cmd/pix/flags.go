@@ -46,6 +46,7 @@ type Dither struct {
 	ScaleFactor  int      `short:"S" long:"scale-factor" description:"the amount to resize the dither effect"`
 	Halftone     bool     `short:"H" long:"halftone" description:"halftone dithering"`
 	Bayer        bool     `short:"b" long:"bayer" description:"bayer dithering"`
+	EightBit     bool     `short:"8" long:"8bit" description:"8bit block dithering"`
 	DitherType   []string `short:"d" long:"dither" description:"dither type using error diffusion dithering"`
 	ListDithers  bool     `short:"z" long:"list-dithers" description:"list ditherers"`
 	ListMatrices bool     `short:"x" long:"list-maps" description:"list matrix map filters"`

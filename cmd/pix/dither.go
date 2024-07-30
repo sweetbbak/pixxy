@@ -10,6 +10,7 @@ import (
 	"pix/pkg/filters"
 	"pix/pkg/glitch"
 	dither2 "pix/pkg/glitch/dither"
+	fx "pix/pkg/glitch/dither"
 	"pix/pkg/imaging"
 
 	"github.com/makeworld-the-better-one/dither/v2"
@@ -156,6 +157,12 @@ func (d *Dither) DitherF() error {
 	if d.Halftone {
 		ximg := imageToRGBA(img)
 		dither2.Halftone(ximg, uint16(d.Threshold*255))
+		img = ximg
+	}
+
+	if d.EightBit {
+		ximg := imageToRGBA(img)
+		fx.EightBit(ximg, int(d.Threshold*255))
 		img = ximg
 	}
 
