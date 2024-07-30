@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"image"
-	"image/color"
 	"image/color/palette"
 	"image/draw"
 	"image/gif"
+	"image/png"
+	"log"
 	"os"
 	"strings"
 
@@ -94,6 +95,33 @@ func getGifDimensions(gif *gif.GIF) (x, y int) {
 	return highestX - lowestX, highestY - lowestY
 }
 
+// Decode reads and analyzes the given reader as a GIF image
+func SplitAnimatedGIF(gif *gif.GIF) (err error) {
+	imgWidth, imgHeight := getGifDimensions(gif)
+
+	overpaintImage := image.NewRGBA(image.Rect(0, 0, imgWidth, imgHeight))
+	draw.Draw(overpaintImage, overpaintImage.Bounds(), gif.Image[0], image.ZP, draw.Src)
+
+	for i, srcImg := range gif.Image {
+		draw.Draw(overpaintImage, overpaintImage.Bounds(), srcImg, image.ZP, draw.Over)
+
+		// save current frame "stack". This will overwrite an existing file with that name
+		file, err := os.Create(fmt.Sprintf("%s%d%s", "frame", i, ".png"))
+		if err != nil {
+			return err
+		}
+
+		err = png.Encode(file, overpaintImage)
+		if err != nil {
+			return err
+		}
+
+		file.Close()
+	}
+
+	return nil
+}
+
 func (a *Ascii) CreateGif(optset []ascii.Option) error {
 	var inputfile string
 	if a.Input != "" {
@@ -109,57 +137,55 @@ func (a *Ascii) CreateGif(optset []ascii.Option) error {
 		return err
 	}
 
-	asciiimg, err := ascii.ConvertWithOpts(g.Image[0], optset...)
+	imgWidth, imgHeight := getGifDimensions(g)
+	newg := &gif.GIF{}
+
+	var pimg *image.Paletted
+	pall := palette.Plan9
+
+	bounds := image.Rect(0, 0, imgWidth, imgHeight)
+	pimg = image.NewPaletted(bounds, pall)
+
+	// draw base gif image to regular image
+	overpaintImage := image.NewRGBA(bounds)
+	draw.Draw(overpaintImage, overpaintImage.Bounds(), g.Image[0], image.ZP, draw.Src)
+
+	// ascii conversion
+	asciiimg, err := ascii.ConvertWithOpts(overpaintImage, optset...)
 	if err != nil {
 		return err
 	}
 
-	// imgWidth, imgHeight := getGifDimensions(g)
-	newGif := &gif.GIF{}
-	bounds := asciiimg.Bounds()
+	// create the initial frame
+	draw.Draw(pimg, overpaintImage.Bounds(), asciiimg, image.ZP, draw.Over)
 
-	var palettedImage *image.Paletted
-	pal := color.Palette{}
-	pal = palette.Plan9[:256]
-
-	// bounds := image.Rect(0, 0, g.Config.Width, g.Config.Height)
-	println(bounds.Max.X, bounds.Max.Y)
-
-	palettedImage = image.NewPaletted(bounds, pal)
-	draw.FloydSteinberg.Draw(palettedImage, bounds, asciiimg, image.Pt(0, 0))
-
-	frameDelay := g.Delay[0]
-	frames := len(g.Image)
-
-	newGif.Image = append(newGif.Image, palettedImage)
-	newGif.Delay = append(newGif.Delay, frameDelay)
-	frames--
+	newg.Image = append(newg.Image, pimg)
+	newg.Delay = append(newg.Delay, g.Delay[0])
 
 	// maxGoroutines := 10
 	// guard := make(chan struct{}, maxGoroutines)
 
-	for _, img := range g.Image {
+	for i, srcImg := range g.Image {
 		// guard <- struct{}{}
 		// go func() {
-		asciiimg, err = ascii.ConvertWithOpts(img, optset...)
+		draw.Draw(overpaintImage, overpaintImage.Bounds(), srcImg, image.ZP, draw.Over)
+		pimg := image.NewPaletted(bounds, pall)
+
+		asciiimg, err := ascii.ConvertWithOpts(overpaintImage, optset...)
 		if err != nil {
 			// return err
+			log.Println(err)
 		}
 
-		println("processing frame ", frames)
-		frameDelay := g.Delay[frames]
+		draw.Draw(pimg, overpaintImage.Bounds(), asciiimg, image.ZP, draw.Over)
+		// draw.Draw(pimg, overpaintImage.Bounds(), overpaintImage, image.ZP, draw.Over)
 
-		palettedImage = image.NewPaletted(bounds, pal)
-		draw.FloydSteinberg.Draw(palettedImage, bounds, asciiimg, image.Pt(0, 0))
-
-		newGif.Image = append(newGif.Image, palettedImage)
-		newGif.Delay = append(newGif.Delay, frameDelay)
-		frames--
+		newg.Image = append(newg.Image, pimg)
+		newg.Delay = append(newg.Delay, g.Delay[i])
 		// <-guard
 		// }()
 	}
-
-	SaveAsGif(newGif, a.Output)
+	SaveAsGif(newg, "test.gif")
 	return nil
 }
 
