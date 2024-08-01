@@ -109,9 +109,15 @@ func (d *Dither) DitherF() error {
 		pal = append(pal, c2...)
 	}
 
+	userProvidedPallete := (len(d.Palette) < 0 && d.PaletteFile == "" && d.ColorDepth < 1)
+
 	// if no pallette, use image
-	if d.ColorDepth > 0 {
+	if d.ColorDepth > 0 || !userProvidedPallete {
 		pal = glitch.GetColorPalette(img, d.ColorDepth)
+	}
+
+	if len(pal) < 1 {
+		return fmt.Errorf("pallette empty")
 	}
 
 	bounds := img.Bounds()

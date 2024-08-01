@@ -31,6 +31,7 @@ func Pixxy(args []string) error {
 	case "glitch":
 		return glitchopts.GlitchImage()
 	case "dither":
+		ditheropts.Threshold = 0.333 // set default
 		return ditheropts.DitherImage()
 	case "ascii":
 		return asciiopts.RunAscii()

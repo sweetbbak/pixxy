@@ -32,28 +32,6 @@ func imageToRGBA(src image.Image) *image.RGBA {
 	return dst
 }
 
-func ConvertToRGBA(src image.Image) *image.RGBA {
-	// Create a new RGBA image with the same dimensions as the source image
-	dst := &image.RGBA{
-		Pix:    make([]byte, src.Bounds().Dx()*4*src.Bounds().Dy()),
-		Stride: src.Bounds().Dx() * 4,
-		Rect:   src.Bounds(),
-	}
-
-	// Copy pixels from src to dst
-	for y := 0; y < src.Bounds().Dy(); y++ {
-		for x := 0; x < src.Bounds().Dx(); x++ {
-			oldColor := src.At(x, y)
-			r, g, b, _ := oldColor.RGBA()
-
-			// Set the RGBA value for the destination pixel
-			dst.Set(x, y, color.RGBA{R: uint8(r), G: uint8(g), B: uint8(b), A: 255})
-		}
-	}
-
-	return dst
-}
-
 func RandomChannel() Channel {
 	r := rand.Float32()
 	if r < 0.33 {

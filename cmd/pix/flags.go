@@ -41,15 +41,15 @@ type Dither struct {
 	Threshold    float64  `short:"t" long:"threshold" description:"float from 0.0 - 1.0"`
 	Palette      []string `short:"p" long:"palette" description:"supply a set of hex colors to apply a color dithering effect, reduces colors to the closest supplied color for each pixel"`
 	PaletteFile  string   `short:"P" long:"palette-file" description:"supply a set of colors from a file, uses regex to extract any valid hex color (can use messy files, like terminal theme files, json, etc...)"`
-	ColorDepth   int      `short:"c" long:"color-depth" description:"create palette from the supplied image of N colors. Less is more aesthetic, more is more accurate to source."`
+	ColorDepth   int      `short:"c" long:"color-depth" default:"5" description:"create palette from the supplied image of N colors. Less is more aesthetic, more is more accurate to source."`
 	Scale        bool     `short:"s" long:"scale" description:"rescale image down and then up to accentuate fx"`
 	ScaleFactor  int      `short:"S" long:"scale-factor" description:"the amount to resize the dither effect"`
-	Halftone     bool     `short:"H" long:"halftone" description:"halftone dithering"`
-	Bayer        bool     `short:"b" long:"bayer" description:"bayer dithering"`
+	Halftone     bool     `short:"H" long:"halftone" description:"add a halftone dithering layer"`
+	Bayer        bool     `short:"b" long:"bayer" description:"add a bayer dithering layer"`
 	EightBit     bool     `short:"8" long:"8bit" description:"8bit block dithering"`
 	DitherType   []string `short:"d" long:"dither" description:"dither type using error diffusion dithering"`
-	ListDithers  bool     `short:"z" long:"list-dithers" description:"list ditherers"`
-	ListMatrices bool     `short:"x" long:"list-maps" description:"list matrix map filters"`
+	ListDithers  bool     `short:"z" long:"ls-dither" description:"list dither filters"`
+	ListMatrices bool     `short:"x" long:"ls-matrix" description:"list matrix map filters"`
 	ODM          []string `short:"m" long:"ordered" description:"ordered dither matrix type dithering"`
 
 	Args struct {
