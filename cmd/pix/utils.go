@@ -6,6 +6,7 @@ import (
 	"image/color"
 	"image/draw"
 	"math/rand"
+	"os"
 )
 
 const MAXC = (1 << 16) - 1
@@ -18,6 +19,28 @@ const (
 	Blue
 	Alpha
 )
+
+func stdinOpen() bool {
+	stat, _ := os.Stdin.Stat()
+	if stat.Mode()&os.ModeCharDevice == os.ModeCharDevice {
+		return false
+	} else {
+		return true
+	}
+}
+
+// https://stackoverflow.com/questions/66643946/how-to-remove-duplicates-strings-or-int-from-slice-in-go
+func removeDuplicate[T comparable](sliceList []T) []T {
+	allKeys := make(map[T]bool)
+	list := []T{}
+	for _, item := range sliceList {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+	return list
+}
 
 func imageToRGBA(src image.Image) *image.RGBA {
 	// No conversion needed if image is an *image.RGBA.

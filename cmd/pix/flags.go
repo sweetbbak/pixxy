@@ -61,6 +61,22 @@ type Filters struct {
 	Amount float64 `short:"t" long:"threshold" description:"glitch threshold"`
 }
 
+// color palette generation
+type Pally struct {
+	Verbose     bool     `short:"v" long:"verbose" description:"verbose output - show glitch steps as they occur"`
+	Palette     []string `short:"p" long:"palette" description:"supply a set of hex colors to apply a color dithering effect, reduces colors to the closest supplied color for each pixel"`
+	PaletteFile string   `short:"P" long:"palette-file" description:"supply a set of colors from a file, uses regex to extract any valid hex color (can use messy files, like terminal theme files, json, etc...)"`
+	ColorDepth  int      `short:"c" long:"color-depth" description:"create palette from the supplied image of N colors. Less is more aesthetic, more is more accurate to source."`
+	Input       string   `short:"i" long:"input" description:"input image file, explicit flag (also accepts a trailing positional argument)"`
+	Output      string   `short:"o" long:"output" description:"save image/gif as output file"`
+	ApplyColor  bool     `short:"a" long:"apply" description:"apply a palette to an image - must provide an input image"`
+	PrintAnsi   bool     `short:"e" long:"ansi" description:"print ANSI escape codes for each color"`
+
+	Args struct {
+		Image string
+	} `positional-args:"yes" positional-arg-name:"IMAGE"`
+}
+
 type Glitch struct {
 	Gif         bool     `short:"g" long:"gif" description:"create a gif"`
 	Verbose     bool     `short:"v" long:"verbose" description:"verbose output - show glitch steps as they occur"`
@@ -76,5 +92,5 @@ type Glitch struct {
 
 	Args struct {
 		Image string
-	} `positional-args:"yes" positional-arg-name:"TORRENT"`
+	} `positional-args:"yes" positional-arg-name:"IMAGE"`
 }

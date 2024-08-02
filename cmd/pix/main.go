@@ -19,6 +19,7 @@ var (
 	glitchopts Glitch
 	filteropts Filters
 	asciiopts  Ascii
+	coloropts  Pally
 )
 
 var parser = flags.NewParser(&opts, flags.Default)
@@ -35,6 +36,8 @@ func Pixxy(args []string) error {
 		return ditheropts.DitherImage()
 	case "ascii":
 		return asciiopts.RunAscii()
+	case "color":
+		return coloropts.GetColors()
 	default:
 		return nil
 	}
@@ -62,6 +65,11 @@ func init() {
 	}
 
 	_, err = parser.AddCommand("ascii", "turn an image into ascii characters", "", &asciiopts)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = parser.AddCommand("color", "turn an image into ascii characters", "", &coloropts)
 	if err != nil {
 		log.Fatal(err)
 	}
