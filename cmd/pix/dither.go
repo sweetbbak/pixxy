@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"log"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 
 	"pix/pkg/filters"
 	"pix/pkg/glitch"
@@ -14,6 +17,7 @@ import (
 	"pix/pkg/imaging"
 
 	"github.com/makeworld-the-better-one/dither/v2"
+	"github.com/sahilm/fuzzy"
 )
 
 var ditherers = map[string]dither.ErrorDiffusionMatrix{
@@ -50,6 +54,47 @@ var odmName = map[string]dither.OrderedDitherMatrix{
 	"clustereddotdiagonal8x8_3":  dither.ClusteredDotDiagonal8x8_3,
 }
 
+var (
+	DitherList []string
+	MatrixList []string
+)
+
+func RandomDither() (string, dither.ErrorDiffusionMatrix, bool) {
+	r := rand.New(rand.NewSource(1))
+	min := 0
+	max := len(DitherList)
+	randInt := r.Intn(max - min)
+	name := DitherList[randInt]
+	d, ok := ditherers[name]
+	return name, d, ok
+}
+
+func RandomMatrix() (string, dither.OrderedDitherMatrix, bool) {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	min := 0
+	max := len(MatrixList) - 1
+	randInt := r.Intn(max-min) + min
+	name := MatrixList[randInt]
+	m, ok := odmName[name]
+	return name, m, ok
+}
+
+func getDlist() []string {
+	var list []string
+	for k := range ditherers {
+		list = append(list, k)
+	}
+	return list
+}
+
+func getMlist() []string {
+	var list []string
+	for k := range odmName {
+		list = append(list, k)
+	}
+	return list
+}
+
 func (d *Dither) ListMaps() {
 	for item := range odmName {
 		fmt.Fprintln(os.Stdout, item)
@@ -76,6 +121,10 @@ func (d *Dither) DitherODM(img image.Image, op string, pal []color.Color) (image
 func (d *Dither) DitherF() error {
 	var pal color.Palette
 	var img image.Image
+
+	if d.Verbose {
+		debug = log.Printf
+	}
 
 	// open image file
 	var inputfile string
@@ -134,12 +183,30 @@ func (d *Dither) DitherF() error {
 	dx := dither.NewDitherer(pal)
 
 	for _, input := range d.DitherType {
-		dt, ok := ditherers[strings.ReplaceAll(strings.ToLower(input), "-", "_")]
-		if !ok {
-			return fmt.Errorf("ditherer not recognized: %v", input)
+		userInput := strings.ReplaceAll(strings.ToLower(input), "-", "_")
+		var dt dither.ErrorDiffusionMatrix
+		var name string
+		DitherList = getDlist()
+
+		if userInput == "rand" || userInput == "random" {
+			var ok bool
+			name, dt, ok = RandomDither()
+			if !ok {
+				return fmt.Errorf("idk what the fuck is happening sis: %v %v %v", name, d, ok)
+			}
+		} else {
+			matches := fuzzy.Find(userInput, DitherList)
+			debug("score: %v", matches[0].Score)
+			name = matches[0].Str
+
+			var ok bool
+			dt, ok = ditherers[matches[0].Str]
+			if !ok {
+				return fmt.Errorf("ditherer not recognized: %v\naccepted values: %v", input, DitherList)
+			}
 		}
 
-		fmt.Printf("running %v\n", input)
+		fmt.Printf("running dither: %v\n", name)
 		dx.Matrix = dt
 		dx.Serpentine = true
 		img = dx.Dither(img)
@@ -147,11 +214,30 @@ func (d *Dither) DitherF() error {
 	}
 
 	for _, input := range d.ODM {
-		matrix, ok := odmName[strings.ReplaceAll(strings.ToLower(input), "-", "_")]
-		if !ok {
-			return fmt.Errorf("matrix type not found: %v", input)
+		userInput := strings.ReplaceAll(strings.ToLower(input), "-", "_")
+
+		var matrix dither.OrderedDitherMatrix
+		var name string
+		MatrixList = getMlist()
+
+		if userInput == "rand" || userInput == "random" {
+			var ok bool
+			name, matrix, ok = RandomMatrix()
+			if !ok {
+				return fmt.Errorf("idk what the fuck is happening sis: %v %v %v", name, matrix, ok)
+			}
+		} else {
+			var ok bool
+			matches := fuzzy.Find(userInput, MatrixList)
+			name = matches[0].Str
+
+			matrix, ok = odmName[name]
+			if !ok {
+				return fmt.Errorf("matrix type not found: %v", input)
+			}
 		}
 
+		fmt.Printf("running dither matrix: %v\n", name)
 		dx.Mapper = dither.PixelMapperFromMatrix(matrix, float32(d.Threshold))
 		img = dx.Dither(img)
 	}

@@ -36,6 +36,7 @@ type Ascii struct {
 }
 
 type Dither struct {
+	Verbose      bool     `short:"v" long:"verbose" description:"print debugging information and verbose output"`
 	Input        string   `short:"i" long:"input" description:"input image file, explicit flag (also accepts a trailing positional argument)"`
 	Output       string   `short:"o" long:"output" description:"save image/gif as output file"`
 	Threshold    float64  `short:"t" long:"threshold" description:"float from 0.0 - 1.0"`

@@ -10,12 +10,14 @@ require (
 	github.com/makeworld-the-better-one/dither/v2 v2.4.0
 	github.com/muesli/gamut v0.3.1
 	github.com/muesli/smartcrop v0.3.0
+	github.com/sahilm/fuzzy v0.1.1
 	github.com/theckman/yacspin v0.13.12
 	golang.org/x/image v0.18.0
 )
 
 require (
 	github.com/fatih/color v1.13.0 // indirect
+	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
