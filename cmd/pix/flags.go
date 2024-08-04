@@ -95,3 +95,15 @@ type Glitch struct {
 		Image string
 	} `positional-args:"yes" positional-arg-name:"IMAGE"`
 }
+
+type VHS struct {
+	Input  []string `short:"i" long:"input" description:"input image file, explicit flag (also accepts a trailing positional argument)"`
+	Output string   `short:"o" long:"output" description:"save image/gif as output file"`
+	Mix    int      `short:"m" long:"mix" description:"idk"`
+	Gif    bool     `short:"g" long:"gif" description:"output as gif"`
+	Video  bool     `short:"v" long:"video" description:"process each frame of a video or gif"`
+
+	Args struct {
+		Image string
+	} `positional-args:"yes" positional-arg-name:"IMAGE"`
+}

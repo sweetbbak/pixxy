@@ -56,13 +56,29 @@ pix dither              \
 
 # random ordered matrix of 0.3 strength and using a color palette from a random file containing hex colors
 pix dither \
---input input.png \
---output out.png \
---palette-file ~/.config/kitty/themes/pretty-pink.conf \
--t 0.3 \
--m $(/pix dither --list-maps | shuf | head -n1) \
---scale --scale-factor 5
+  --input input.png \
+  --output out.png \
+  --palette-file ~/.config/kitty/themes/pretty-pink.conf \
+  -t 0.3 \
+  -m $(/pix dither --list-maps | shuf | head -n1) \
+  --scale --scale-factor 5
 ```
+
+## Glitch
+
+create a gif or still image that is glitched out
+
+## Ascii
+
+convert a gif, video or image into an ascii representation.
+
+## Color
+
+functions to create color palettes and modify the colors of an image
+
+## Filter
+
+generic filters to apply to an image
 
 # Wallpaper-finder
 
@@ -107,3 +123,7 @@ under permissive licenses which has been a great help to me as well as a learnin
 [fiwippi/go-ascii](https://github.com/fiwippi/go-ascii) BSD-3-Clause
 
 - modified ascii converter pulled from here
+
+[peterhellberg/gfx](https://github.com/peterhellberg/gfx) MIT
+
+- learned about Vec2, Vec3 and affine matrix math from here

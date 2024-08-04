@@ -20,6 +20,7 @@ var (
 	filteropts Filters
 	asciiopts  Ascii
 	coloropts  Pally
+	vhsopts    VHS
 )
 
 var parser = flags.NewParser(&opts, flags.Default)
@@ -38,6 +39,8 @@ func Pixxy(args []string) error {
 		return asciiopts.RunAscii()
 	case "color":
 		return coloropts.GetColors()
+	case "vhs":
+		return vhsopts.Run()
 	default:
 		return nil
 	}
@@ -70,6 +73,11 @@ func init() {
 	}
 
 	_, err = parser.AddCommand("color", "turn an image into ascii characters", "", &coloropts)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = parser.AddCommand("vhs", "turn an image into ascii characters", "", &vhsopts)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -100,10 +100,10 @@ func SplitAnimatedGIF(gif *gif.GIF) (err error) {
 	imgWidth, imgHeight := getGifDimensions(gif)
 
 	overpaintImage := image.NewRGBA(image.Rect(0, 0, imgWidth, imgHeight))
-	draw.Draw(overpaintImage, overpaintImage.Bounds(), gif.Image[0], image.ZP, draw.Src)
+	draw.Draw(overpaintImage, overpaintImage.Bounds(), gif.Image[0], image.Point{0, 0}, draw.Src)
 
 	for i, srcImg := range gif.Image {
-		draw.Draw(overpaintImage, overpaintImage.Bounds(), srcImg, image.ZP, draw.Over)
+		draw.Draw(overpaintImage, overpaintImage.Bounds(), srcImg, image.Point{0, 0}, draw.Over)
 
 		// save current frame "stack". This will overwrite an existing file with that name
 		file, err := os.Create(fmt.Sprintf("%s%d%s", "frame", i, ".png"))
@@ -148,7 +148,7 @@ func (a *Ascii) CreateGif(optset []ascii.Option) error {
 
 	// draw base gif image to regular image
 	overpaintImage := image.NewRGBA(bounds)
-	draw.Draw(overpaintImage, overpaintImage.Bounds(), g.Image[0], image.ZP, draw.Src)
+	draw.Draw(overpaintImage, overpaintImage.Bounds(), g.Image[0], image.Point{0, 0}, draw.Src)
 
 	// ascii conversion
 	asciiimg, err := ascii.ConvertWithOpts(overpaintImage, optset...)
@@ -157,7 +157,7 @@ func (a *Ascii) CreateGif(optset []ascii.Option) error {
 	}
 
 	// create the initial frame
-	draw.Draw(pimg, overpaintImage.Bounds(), asciiimg, image.ZP, draw.Over)
+	draw.Draw(pimg, overpaintImage.Bounds(), asciiimg, image.Point{0, 0}, draw.Over)
 
 	newg.Image = append(newg.Image, pimg)
 	newg.Delay = append(newg.Delay, g.Delay[0])
@@ -168,7 +168,7 @@ func (a *Ascii) CreateGif(optset []ascii.Option) error {
 	for i, srcImg := range g.Image {
 		// guard <- struct{}{}
 		// go func() {
-		draw.Draw(overpaintImage, overpaintImage.Bounds(), srcImg, image.ZP, draw.Over)
+		draw.Draw(overpaintImage, overpaintImage.Bounds(), srcImg, image.Point{0, 0}, draw.Over)
 		pimg := image.NewPaletted(bounds, pall)
 
 		asciiimg, err := ascii.ConvertWithOpts(overpaintImage, optset...)
@@ -177,7 +177,7 @@ func (a *Ascii) CreateGif(optset []ascii.Option) error {
 			log.Println(err)
 		}
 
-		draw.Draw(pimg, overpaintImage.Bounds(), asciiimg, image.ZP, draw.Over)
+		draw.Draw(pimg, overpaintImage.Bounds(), asciiimg, image.Point{0, 0}, draw.Over)
 		// draw.Draw(pimg, overpaintImage.Bounds(), overpaintImage, image.ZP, draw.Over)
 
 		newg.Image = append(newg.Image, pimg)

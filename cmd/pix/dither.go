@@ -259,7 +259,7 @@ func (d *Dither) DitherF() error {
 	}
 
 	if d.Scale {
-		img = imaging.Resize(img, bounds.Dx(), bounds.Dy(), imaging.Lanczos)
+		img = imaging.Resize(img, bounds.Dx(), bounds.Dy(), imaging.NearestNeighbor)
 	}
 
 	if d.Output != "" {
