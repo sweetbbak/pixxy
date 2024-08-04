@@ -97,11 +97,13 @@ type Glitch struct {
 }
 
 type VHS struct {
-	Input  []string `short:"i" long:"input" description:"input image file, explicit flag (also accepts a trailing positional argument)"`
-	Output string   `short:"o" long:"output" description:"save image/gif as output file"`
-	Mix    int      `short:"m" long:"mix" description:"idk"`
-	Gif    bool     `short:"g" long:"gif" description:"output as gif"`
-	Video  bool     `short:"v" long:"video" description:"process each frame of a video or gif"`
+	Input       []string `short:"i" long:"input" description:"input image file, explicit flag (also accepts a trailing positional argument)"`
+	Output      string   `short:"o" long:"output" description:"save image/gif as output file"`
+	Mix         int      `short:"m" long:"mix" description:"idk"`
+	Gif         bool     `short:"g" long:"gif" description:"output as gif"`
+	Video       bool     `short:"v" long:"video" description:"process each frame of a video or gif"`
+	Scale       bool     `short:"s" long:"scale" description:"rescale image down and then up to accentuate fx"`
+	ScaleFactor float64  `short:"S" long:"scale-factor" description:"the amount to resize the dither effect"`
 
 	Args struct {
 		Image string

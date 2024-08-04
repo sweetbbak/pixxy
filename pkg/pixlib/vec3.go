@@ -46,7 +46,7 @@ func Vec3ToColor(v Vec3) color.Color {
 	r := linearize(v.X)
 	g := linearize(v.Y)
 	b := linearize(v.Z)
-	fmt.Printf("rgb(%v, %v, %v)\n", r, g, b)
+	// fmt.Printf("rgb(%v, %v, %v)\n", r, g, b)
 
 	return color.RGBA{uint8(r), uint8(g), uint8(b), 0xff}
 }
