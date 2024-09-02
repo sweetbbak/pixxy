@@ -34,12 +34,12 @@ func (v *VHS) Run() error {
 	// 	return fmt.Errorf("provide an input image")
 	// }
 
-	img, err := openImage(v.Input[0])
+	img, err := openImage(string(v.Input))
 	if err != nil {
 		return err
 	}
 
-	img2, err := openImage(v.Input[1])
+	img2, err := openImage(string(v.Overlay))
 	if err != nil {
 		return err
 	}

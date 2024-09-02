@@ -22,7 +22,7 @@ func (p *Pally) GetColors() error {
 	// open image file
 	var inputfile string
 	if p.Input != "" {
-		inputfile = p.Input
+		inputfile = string(p.Input)
 	} else if p.Args.Image != "" {
 		inputfile = p.Args.Image
 	}
@@ -50,7 +50,7 @@ func (p *Pally) GetColors() error {
 	}
 
 	if p.PaletteFile != "" {
-		f, err := os.Open(p.PaletteFile)
+		f, err := os.Open(string(p.PaletteFile))
 		if err != nil {
 			return err
 		}
@@ -108,7 +108,7 @@ func (p *Pally) GetColors() error {
 
 		var outname string
 		if p.Output != "" {
-			outname = p.Output
+			outname = string(p.Output)
 		} else {
 			outname = "output.png"
 		}

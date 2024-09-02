@@ -129,7 +129,7 @@ func (d *Dither) DitherF() error {
 	// open image file
 	var inputfile string
 	if d.Input != "" {
-		inputfile = d.Input
+		inputfile = string(d.Input)
 	} else if d.Args.Image != "" {
 		inputfile = d.Args.Image
 	} else {
@@ -158,10 +158,11 @@ func (d *Dither) DitherF() error {
 		pal = append(pal, c2...)
 	}
 
-	userProvidedPallete := (len(d.Palette) < 0 && d.PaletteFile == "" && d.ColorDepth < 1)
+	// userProvidedPallete := (len(d.Palette) < 0 && d.PaletteFile == "" && d.ColorDepth < 1)
+	userProvidedPallete := (len(d.Palette) < 1 || d.PaletteFile == "")
 
 	// if no pallette, use image
-	if d.ColorDepth > 0 || !userProvidedPallete {
+	if d.ColorDepth > 0 && !userProvidedPallete {
 		pal = glitch.GetColorPalette(img, d.ColorDepth)
 	}
 
@@ -263,13 +264,13 @@ func (d *Dither) DitherF() error {
 	}
 
 	if d.Output != "" {
-		f, err := os.Create(d.Output)
+		f, err := os.Create(string(d.Output))
 		if err != nil {
 			return err
 		}
 		defer f.Close()
 
-		SaveImageToPNG(img, d.Output)
+		SaveImageToPNG(img, string(d.Output))
 	}
 	return nil
 }

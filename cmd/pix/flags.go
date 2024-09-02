@@ -1,6 +1,43 @@
 package main
 
-import ()
+import (
+// "os"
+// "path/filepath"
+// "strings"
+
+// "github.com/jessevdk/go-flags"
+)
+
+// func (f *string) Complete(match string) []flags.Completion {
+// 	// var prefix string = ""
+// 	// if strings.HasPrefix(match, "~") {
+// 	// 	prefix = os.ExpandEnv("~")
+// 	// 	match = strings.Replace(match, "~", prefix, 1)
+// 	// }
+//
+// 	// match = os.ExpandEnv(match)
+//
+// 	ret, _ := filepath.Glob(match + "*")
+// 	if len(ret) == 1 {
+// 		if info, err := os.Stat(ret[0]); err == nil && info.IsDir() {
+// 			ret[0] = ret[0] + "/"
+// 		}
+// 		m := make([]flags.Completion, len(ret))
+// 		m[0].Item = ret[0]
+// 		return m
+// 	}
+//
+// 	m := make([]flags.Completion, len(ret))
+// 	for i, v := range ret {
+// 		if info, err := os.Stat(v); err == nil && info.IsDir() {
+// 			v = v + "/"
+// 		}
+//
+// 		m[i].Item = v
+// 	}
+//
+// 	return m
+// }
 
 type Options struct {
 	Verbose bool `short:"v" long:"verbose" description:"print debugging information and verbose output"`
@@ -97,13 +134,14 @@ type Glitch struct {
 }
 
 type VHS struct {
-	Input       []string `short:"i" long:"input" description:"input image file, explicit flag (also accepts a trailing positional argument)"`
-	Output      string   `short:"o" long:"output" description:"save image/gif as output file"`
-	Mix         int      `short:"m" long:"mix" description:"idk"`
-	Gif         bool     `short:"g" long:"gif" description:"output as gif"`
-	Video       bool     `short:"v" long:"video" description:"process each frame of a video or gif"`
-	Scale       bool     `short:"s" long:"scale" description:"rescale image down and then up to accentuate fx"`
-	ScaleFactor float64  `short:"S" long:"scale-factor" description:"the amount to resize the dither effect"`
+	Input       string  `short:"i" long:"input" description:"input image file, explicit flag (also accepts a trailing positional argument)"`
+	Overlay     string  `short:"m" long:"mask" description:"image to overlay over the base image (pixel images)"`
+	Output      string  `short:"o" long:"output" description:"save image/gif as output file"`
+	Mix         int     `short:"x" long:"mix" description:"idk"`
+	Gif         bool    `short:"g" long:"gif" description:"output as gif"`
+	Video       bool    `short:"v" long:"video" description:"process each frame of a video or gif"`
+	Scale       bool    `short:"s" long:"scale" description:"rescale image down and then up to accentuate fx"`
+	ScaleFactor float64 `short:"S" long:"scale-factor" description:"the amount to resize the dither effect"`
 
 	Args struct {
 		Image string

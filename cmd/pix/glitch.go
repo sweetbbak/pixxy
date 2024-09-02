@@ -22,7 +22,7 @@ func (g *Glitch) GlitchImage() error {
 	// open image file
 	var inputfile string
 	if g.Input != "" {
-		inputfile = g.Input
+		inputfile = string(g.Input)
 	} else if g.Args.Image != "" {
 		inputfile = g.Args.Image
 	} else {
@@ -91,7 +91,7 @@ func (g *Glitch) GlitchImage() error {
 
 	var outname string
 	if g.Output != "" {
-		outname = g.Output
+		outname = string(g.Output)
 	}
 
 	if g.Gif {

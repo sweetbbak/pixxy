@@ -48,7 +48,7 @@ func (a *Ascii) ParseCharset() ascii.Charset {
 func (a *Ascii) OpenImage() (image.Image, error) {
 	var inputfile string
 	if a.Input != "" {
-		inputfile = a.Input
+		inputfile = string(a.Input)
 	} else if a.Args.Image != "" {
 		inputfile = a.Args.Image
 	} else {
@@ -64,7 +64,7 @@ func (a *Ascii) OpenImage() (image.Image, error) {
 }
 
 func (a *Ascii) CreateVideo(opts []ascii.Option, args []string) error {
-	err := video.Convert(context.Background(), a.Input, a.Output, opts, args...)
+	err := video.Convert(context.Background(), string(a.Input), string(a.Output), opts, args...)
 	if err != nil {
 		return err
 	}
@@ -125,7 +125,7 @@ func SplitAnimatedGIF(gif *gif.GIF) (err error) {
 func (a *Ascii) CreateGif(optset []ascii.Option) error {
 	var inputfile string
 	if a.Input != "" {
-		inputfile = a.Input
+		inputfile = string(a.Input)
 	} else if a.Args.Image != "" {
 		inputfile = a.Args.Image
 	} else {
@@ -238,7 +238,7 @@ func (a *Ascii) RunAscii() error {
 
 	var outname string
 	if a.Output != "" {
-		outname = a.Output
+		outname = string(a.Output)
 	} else {
 		outname = "ascii.png"
 	}
