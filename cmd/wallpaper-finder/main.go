@@ -19,8 +19,7 @@ import (
 )
 
 var opts struct {
-	Extensions     []string `short:"e" long:"extension" description:"an array of extensions to search for ie (-e png -e jpg)"`
-	Paths          []string `short:"d" long:"directory" description:"an array of paths to search, can specify more than one"`
+	Extensions     []string `short:"e" long:"extension" description:"extensions to search for ie (-e png -e jpg) can specify multliple times"`
 	Ratio          string   `short:"r" long:"ratio" description:"a ratio to search, in the format <widht>x<height> (16x9)"`
 	Tolerance      float32  `short:"t" long:"tolerance" description:"percentage of tolerance for the ratio [5%]"`
 	Color          bool     `short:"c" long:"color" description:"print paths with color"`
@@ -49,7 +48,7 @@ func (self *Aspect) isRatio() bool {
 }
 
 // log function
-var debug = func(string, ...interface{}) {}
+var debug = func(string, ...any) {}
 
 var DecodeError = errors.New("error decoding image")
 
@@ -221,17 +220,24 @@ func init() {
 	opts.Tolerance = 5.0
 }
 
+var msg string = `Examples:
+  wallpaper-finder ~/Pictures ~/hdd/Pictures
+  wallpaper-finder -r 16x9 ~/Pictures
+  wallpaper-finder -e png ~/Pictures
+`
+
 func main() {
 	args, err := flags.Parse(&opts)
+	if flags.WroteHelp(err) {
+		println(msg)
+		os.Exit(0)
+	}
 	if err != nil {
-		if err == flags.ErrHelp {
-			os.Exit(0)
-		}
 		log.Fatal(err)
 	}
 
 	SetExtensions() // if extensions arent set, set the defaults
-	fixExtensions()
+	fixExtensions() // if extenstions dont have a dot fix them so they work with the Go stdlib
 
 	if opts.Ratio == "" {
 		ASPECT_RATIO = 1.7777777
@@ -251,6 +257,6 @@ func main() {
 	debug("aspect_ratio: %v", ASPECT_RATIO)
 
 	if err := Wall(args); err != nil {
-		log.Fatal(err)
+		log.Fatal("wall: ", err)
 	}
 }
