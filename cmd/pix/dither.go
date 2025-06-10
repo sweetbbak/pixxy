@@ -148,6 +148,7 @@ func (d *Dither) DitherF() error {
 			return err
 		}
 		pal = c1
+		debug("using color palette from provided colors: %v", pal)
 	}
 
 	if d.PaletteFile != "" {
@@ -156,14 +157,16 @@ func (d *Dither) DitherF() error {
 			return err
 		}
 		pal = append(pal, c2...)
+		debug("using color palette from file colors: %v", pal)
 	}
 
 	// userProvidedPallete := (len(d.Palette) < 0 && d.PaletteFile == "" && d.ColorDepth < 1)
-	userProvidedPallete := (len(d.Palette) < 1 || d.PaletteFile == "")
+	userProvidedPallete := (len(d.Palette) > 1 || d.PaletteFile != "")
 
 	// if no pallette, use image
 	if d.ColorDepth > 0 && !userProvidedPallete {
 		pal = glitch.GetColorPalette(img, d.ColorDepth)
+		debug("using color palette from quantization: %v", pal)
 	}
 
 	if len(pal) < 1 {
@@ -263,6 +266,11 @@ func (d *Dither) DitherF() error {
 		img = imaging.Resize(img, bounds.Dx(), bounds.Dy(), imaging.NearestNeighbor)
 	}
 
+	if d.Output == "-" {
+		WriteImageToStdout(img)
+		return nil
+	}
+
 	if d.Output != "" {
 		f, err := os.Create(string(d.Output))
 		if err != nil {
@@ -270,8 +278,10 @@ func (d *Dither) DitherF() error {
 		}
 		defer f.Close()
 
+		debug("saving image: %s", d.Output)
 		SaveImageToPNG(img, string(d.Output))
 	}
+
 	return nil
 }
 

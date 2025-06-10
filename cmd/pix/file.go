@@ -24,6 +24,10 @@ func SaveImageToPNG(img image.Image, filename string) error {
 	return nil
 }
 
+func WriteImageToStdout(img image.Image) error {
+	return png.Encode(os.Stdout, img)
+}
+
 func SaveAsGif(g *gif.GIF, filename string) error {
 	file, err := os.Create(filename)
 	if err != nil {
