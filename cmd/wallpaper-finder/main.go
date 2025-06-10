@@ -236,6 +236,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if len(args) < 1 {
+		println("Usage: wallpaper-finder <path/to/images>" + "\n\n" + msg + "\n")
+		println("run 'wallpaper-finder --help' for more details")
+		os.Exit(1)
+	}
+
 	SetExtensions() // if extensions arent set, set the defaults
 	fixExtensions() // if extenstions dont have a dot fix them so they work with the Go stdlib
 
@@ -253,8 +259,9 @@ func main() {
 		debug = log.Printf
 	}
 
-	debug("OPTARGS: %v - %v", opts, args)
-	debug("aspect_ratio: %v", ASPECT_RATIO)
+	debug("OPTIONS %v - ARGS %v", opts, args)
+	rat, _ := floatToFraction(ASPECT_RATIO)
+	debug("aspect_ratio: %v %v", ASPECT_RATIO, rat)
 
 	if err := Wall(args); err != nil {
 		log.Fatal("wall: ", err)
